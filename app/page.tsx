@@ -146,81 +146,83 @@ export default function Home() {
   };
 
   return (
-    <SearchParamsHandler>
-      {({ showMuteSpeakerButton, modelOverride, showDebugMessages, showUserTranscripts }: SearchParamsProps) => (
-        <div className="flex flex-col items-center justify-center min-h-screen">
-          <div className="max-w-md mx-auto w-full p-5 ">
-            {/* Status Indicator - Green when active, Orange and blinking when connecting, Gray when inactive */}
-            <div className="flex items-center justify-center mb-6">
-              <div 
-                className={`w-4 h-4 rounded-full ${
-                  isCallActive ? 'bg-green-500' : 
-                  isConnecting ? 'bg-orange-500 animate-pulse' : 'bg-gray-500'
-                }`} 
-                title={agentStatus}
-              />
-              <span className="ml-2 text-sm text-gray-400">({agentStatus})</span>
-            </div>
-            
-            <div className="flex flex-col items-center space-y-6">
-              {/* Transcript Container */}
-              {isCallActive && (
-                <div className="relative h-[300px] w-full overflow-hidden rounded-lg bg-gray-900 bg-opacity-20">
-                  <div 
-                    ref={transcriptContainerRef}
-                    className="h-full w-full p-4 overflow-y-auto scrollbar-hidden flex flex-col justify-end"
-                  >
-                    <div className="space-y-3">
-                      {callTranscript && callTranscript.map((transcript, index) => (
-                        <div 
-                          key={index} 
-                          className={transcript.speaker === 'agent' ? "animate-autoScroll" : ""}
-                        >
-                          {transcript.speaker === 'agent' && (
-                            <p className="mb-2 text-white">{transcript.text}</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {/* Top fade mask for blur effect */}
-                  <div className="transcript-fade-top"></div>
-                </div>
-              )}
+    <Suspense fallback={<div className="flex flex-col items-center justify-center min-h-screen">Loading...</div>}>
+      <SearchParamsHandler>
+        {({ showMuteSpeakerButton, modelOverride, showDebugMessages, showUserTranscripts }: SearchParamsProps) => (
+          <div className="flex flex-col items-center justify-center min-h-screen">
+            <div className="max-w-md mx-auto w-full p-5 ">
+              {/* Status Indicator - Green when active, Orange and blinking when connecting, Gray when inactive */}
+              <div className="flex items-center justify-center mb-6">
+                <div 
+                  className={`w-4 h-4 rounded-full ${
+                    isCallActive ? 'bg-green-500' : 
+                    isConnecting ? 'bg-orange-500 animate-pulse' : 'bg-gray-500'
+                  }`} 
+                  title={agentStatus}
+                />
+                <span className="ml-2 text-sm text-gray-400">({agentStatus})</span>
+              </div>
               
-              {/* Controls */}
-              {isCallActive ? (
-                <div className="flex justify-center w-full gap-4">
-                  <div className="w-1/2">
-                    <div className="w-full px-6 py-3 bg-blue-600 rounded-full flex items-center justify-center">
-                      <MicToggleButton role={Role.USER} />
+              <div className="flex flex-col items-center space-y-6">
+                {/* Transcript Container */}
+                {isCallActive && (
+                  <div className="relative h-[300px] w-full overflow-hidden rounded-lg bg-gray-900 bg-opacity-20">
+                    <div 
+                      ref={transcriptContainerRef}
+                      className="h-full w-full p-4 overflow-y-auto scrollbar-hidden flex flex-col justify-end"
+                    >
+                      <div className="space-y-3">
+                        {callTranscript && callTranscript.map((transcript, index) => (
+                          <div 
+                            key={index} 
+                            className={transcript.speaker === 'agent' ? "animate-autoScroll" : ""}
+                          >
+                            {transcript.speaker === 'agent' && (
+                              <p className="mb-2 text-white">{transcript.text}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Top fade mask for blur effect */}
+                    <div className="transcript-fade-top"></div>
+                  </div>
+                )}
+                
+                {/* Controls */}
+                {isCallActive ? (
+                  <div className="flex justify-center w-full gap-4">
+                    <div className="w-1/2">
+                      <div className="w-full px-6 py-3 bg-blue-600 rounded-full flex items-center justify-center">
+                        <MicToggleButton role={Role.USER} />
+                      </div>
+                    </div>
+                    <div className="w-1/2">
+                      <button
+                        type="button"                      className="w-full px-6 py-3 bg-red-500 rounded-full flex items-center justify-center"
+                        onClick={handleEndCallButtonClick}
+                      >
+                        <PhoneOffIcon width={20} className="brightness-0 invert mr-2" />
+                        End Call
+                      </button>
                     </div>
                   </div>
-                  <div className="w-1/2">
+                ) : (
+                  <div className="flex justify-center">
                     <button
-                      type="button"                      className="w-full px-6 py-3 bg-red-500 rounded-full flex items-center justify-center"
-                      onClick={handleEndCallButtonClick}
+                      type="button"
+                      className="px-10 py-3 border-2 rounded-full"
+                      onClick={() => handleStartCallButtonClick(modelOverride, showDebugMessages)}
                     >
-                      <PhoneOffIcon width={20} className="brightness-0 invert mr-2" />
-                      End Call
+                      Start Call
                     </button>
                   </div>
-                </div>
-              ) : (
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    className="px-10 py-3 border-2 rounded-full"
-                    onClick={() => handleStartCallButtonClick(modelOverride, showDebugMessages)}
-                  >
-                    Start Call
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </SearchParamsHandler>
+        )}
+      </SearchParamsHandler>
+    </Suspense>
   );
 }
