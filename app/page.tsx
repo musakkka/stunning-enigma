@@ -127,7 +127,7 @@ export default function Home() {
       handleStatusChange('Call started successfully');
     } catch (error) {
       setIsConnecting(false);
-      handleStatusChange(`Error starting call: ${error instanceof Error ? error.message : String(error)}`);
+      handleStatusChange('Something went wrong');
     }
   };
 
@@ -141,7 +141,7 @@ export default function Home() {
       setCustomerProfileKey(null);
       handleStatusChange('Call ended successfully');
     } catch (error) {
-      handleStatusChange(`Error ending call: ${error instanceof Error ? error.message : String(error)}`);
+      handleStatusChange('Something went wrong');
     }
   };
 

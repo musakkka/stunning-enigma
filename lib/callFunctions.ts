@@ -34,7 +34,7 @@ async function createCall(callConfig: CallConfig, showDebugMessages?: boolean): 
       console.log(`Using model ${callConfig.model}`);
     }
 
-    const response = await fetch(`/api/ultravox`, {
+    const response = await fetch(`/api/utx`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
