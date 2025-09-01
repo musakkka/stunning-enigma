@@ -34,3 +34,26 @@ export function getCurrentApiKey(): string {
 export function getNextApiKey(): string {
   return getRandomApiKey();
 } 
+
+// Returns both the selected API key value and the env var name used (e.g., ULTRAVOX_API_KEY_1)
+export function getNextApiKeyInfo(): { apiKey: string; keyName: string } {
+  const envKeys = Object.keys(process.env).filter(key => 
+    key.startsWith('ULTRAVOX_API_KEY_')
+  );
+
+  if (envKeys.length === 0) {
+    console.error('No Ultravox API keys found in environment variables');
+    throw new Error('No Ultravox API keys configured');
+  }
+
+  const randomIndex = Math.floor(Math.random() * envKeys.length);
+  const keyName = envKeys[randomIndex];
+  const apiKey = process.env[keyName];
+
+  if (!apiKey) {
+    console.error('Selected API key is undefined');
+    throw new Error('API key is undefined');
+  }
+
+  return { apiKey, keyName };
+}
