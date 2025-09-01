@@ -3,21 +3,43 @@ import { CallConfig, SelectedTool } from '@/lib/types';
 import { getNextApiKeyInfo } from '@/lib/apiKeyManager';
 
 export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  const allowedOrigins = [
+    'https://genie.elyxa.dev',
+    'http://localhost:3000',
+    'http://localhost:3001', 
+    'http://localhost:3002'
+  ];
+  
+  const corsOrigin = allowedOrigins.includes(origin || '') ? origin : allowedOrigins[0];
+  
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
     },
   });
 }
 
 export async function POST(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  const allowedOrigins = [
+    'https://genie.elyxa.dev',
+    'http://localhost:3000',
+    'http://localhost:3001', 
+    'http://localhost:3002'
+  ];
+  
+  const corsOrigin = allowedOrigins.includes(origin || '') ? origin : allowedOrigins[0];
+  
   const headers = new Headers({
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': corsOrigin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
   });
 
   try {
