@@ -2,6 +2,17 @@ import { NextResponse, NextRequest } from 'next/server';
 import { CallConfig, SelectedTool } from '@/lib/types';
 import { getNextApiKeyInfo } from '@/lib/apiKeyManager';
 
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: CallConfig = await request.json();
@@ -66,19 +77,33 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    });
   } catch (error) {
     console.error('Error in API route:', error);
     if (error instanceof Error) {
-      return NextResponse.json(
+      const errorResponse = NextResponse.json(
         { error: 'Error calling Ultravox API', details: error.message },
         { status: 500 }
       );
+      errorResponse.headers.set('Access-Control-Allow-Origin', '*');
+      errorResponse.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      return errorResponse;
     } else {
-      return NextResponse.json(
+      const errorResponse = NextResponse.json(
         { error: 'An unknown error occurred.' },
         { status: 500 }
       );
+      errorResponse.headers.set('Access-Control-Allow-Origin', '*');
+      errorResponse.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+      errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      return errorResponse;
     }
   }
 }

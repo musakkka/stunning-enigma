@@ -34,7 +34,7 @@ async function createCall(callConfig: CallConfig, showDebugMessages?: boolean): 
       console.log(`Using model ${callConfig.model}`);
     }
 
-    const response = await fetch(`/api/utx`, {
+    const response = await fetch(`https://demo.elyxa.dev/api/utx`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
