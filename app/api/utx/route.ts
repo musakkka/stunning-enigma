@@ -14,6 +14,12 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const headers = new Headers({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  });
+
   try {
     const body: CallConfig = await request.json();
     console.log('Attempting to call Ultravox API...');
@@ -77,33 +83,19 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    return NextResponse.json(data, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    });
+    return NextResponse.json(data, { headers });
   } catch (error) {
     console.error('Error in API route:', error);
     if (error instanceof Error) {
-      const errorResponse = NextResponse.json(
+      return NextResponse.json(
         { error: 'Error calling Ultravox API', details: error.message },
-        { status: 500 }
+        { status: 500, headers }
       );
-      errorResponse.headers.set('Access-Control-Allow-Origin', '*');
-      errorResponse.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-      errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      return errorResponse;
     } else {
-      const errorResponse = NextResponse.json(
+      return NextResponse.json(
         { error: 'An unknown error occurred.' },
-        { status: 500 }
+        { status: 500, headers }
       );
-      errorResponse.headers.set('Access-Control-Allow-Origin', '*');
-      errorResponse.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-      errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      return errorResponse;
     }
   }
 }
