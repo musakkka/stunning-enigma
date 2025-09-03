@@ -109,6 +109,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error in API route:', error);
     if (error instanceof Error) {
+      // Check for subscription error
+      if (error.message.includes('Set up your subscription to make more calls')) {
+        return NextResponse.json(
+          { error: 'The voice model server is experiencing issues. Please try again later.' },
+          { status: 503, headers }
+        );
+      }
       return NextResponse.json(
         { error: 'Error calling Ultravox API', details: error.message },
         { status: 500, headers }
